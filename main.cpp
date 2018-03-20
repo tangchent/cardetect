@@ -110,8 +110,12 @@ int main(int argc, const char** argv)
     //release window
     destroyWindow(window_name);
 
+<<<<<<< HEAD
 	printf("exit...\n");
 
+=======
+    printf("exit...\n");
+>>>>>>> parent of 07e4a4e... first commit
     return 0;
 }
 
