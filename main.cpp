@@ -110,6 +110,7 @@ int main(int argc, const char** argv)
     //release window
     destroyWindow(window_name);
 
+    printf("exit...\n");
     return 0;
 }
 
