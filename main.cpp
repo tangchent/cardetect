@@ -106,7 +106,10 @@ int main(int argc, const char** argv)
     for (vector<String *>::iterator itr = result.begin(); itr != result.end(); ++itr) {
         delete *itr;
     }
+
+    //release window
     destroyWindow(window_name);
+
     return 0;
 }
 
