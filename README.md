@@ -30,6 +30,7 @@ I will provide execute for windows and linux,and here are some Requirements
         From: https://www.microsoft.com/en-us/download/details.aspx?id=48145
 \###**Build Step**
 **Linux**
+
 for 64 - bit system, assume you hava already install opencv in /usr/local/opencv-2.4.10/
 ``` bash
 cd current directory
