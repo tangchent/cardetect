@@ -2,6 +2,8 @@
 
 implements Vehicle detection through cascade classifier.The cascade classifier is trained by OpenCV's demon app "opencv_traincascade"
 
+![image](https://github.com/tangchent/cardetect/raw/master/picture/Picture1.png)
+
 you can get the binary in the bin folder
 
 I will provide execute for windows and linux,and here are some Requirements
