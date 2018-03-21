@@ -14,7 +14,7 @@ void detectAndDisplay(Mat frame);
 void executeCMD(const char *cmd, vector<String *>& result);
 
 /** Global variables */
-String car_cascade_name = "cascade.xml";
+String car_cascade_name = "cascade.xml"; //the cascades file name
 CascadeClassifier car_cascade;
 String window_name = "Car detection";
 
@@ -38,45 +38,18 @@ int main(int argc, const char** argv)
         return -1;
     }
 
-    //-- 2. Read the video stream
-//    CvCapture* capture;
-//    capture = cvCaptureFromCAM(0);
-//    if (capture)
-//    {
-//        while (true)
-//        {
-//            frame = cvQueryFrame(capture);
-
-//            //-- 3. Apply the classifier to the frame
-//            if (!frame.empty())
-//            {
-//                detectAndDisplay(frame);
-//            }
-//            else
-//            {
-//                printf(" --(!) No captured frame -- Break!"); break;
-//            }
-
-//            int c = waitKey(10);
-//            if ((char)c == 'c') {
-//                destroyWindow(window_name);
-//                cvReleaseCapture(&capture);
-//                break;
-//            }
-//        }
-//    }
-
     //-- 2. Read the picture stream
     result.clear();
     executeCMD("ls data/*.png",result); //get file name
 
     while (true) {
-        //remove \n
+        //remove '\n'
         strncpy(filename,result.at(index)->c_str(),result.at(index)->size() - 1);
         //open file
         frame = imread(filename);
         if(frame.empty()) {
-            break;
+             printf(" --(!) No frame -- Break!");
+             break;
         }
 
         // start time
@@ -89,15 +62,13 @@ int main(int argc, const char** argv)
         fflush(stdout);
 
         c = waitKey(10);
-        if (!stop && ++index > (int)(result.size() - 1))    index = 0;
+        if (!stop && ++index > (int)(result.size() - 1))    index = 0; //auto read
         if (c == 27) { //ESC
             break;
         } else if (c == 'a' || c == 'A' || c == 81) { //A or left arrow
             if (--index <  0)    index = 0;
-            frame = imread(*result.at(index));
         } else if (c == 'd' || c == 'D' || c == 83) { //D or right arrow
             if (++index > (int)(result.size() - 1))    index = 0;
-            frame = imread(*result.at(index));
         } else if (c == 's' || c == 'S') {
             stop = !stop;
         }
@@ -110,16 +81,16 @@ int main(int argc, const char** argv)
     //release window
     destroyWindow(window_name);
 
-<<<<<<< HEAD
 	printf("exit...\n");
 
-=======
-    printf("exit...\n");
->>>>>>> parent of 07e4a4e... first commit
     return 0;
 }
-
-/** @function detectAndDisplay */
+/**
+ * detect and display function
+ *
+ * @param frame . the image needed to detection,the format should be BGR
+ * @return
+ */
 void detectAndDisplay(Mat frame)
 {
     std::vector<Rect> cars;
@@ -148,6 +119,16 @@ void detectAndDisplay(Mat frame)
     imshow(window_name, frame);
 }
 
+/**
+ * execute command use command line
+ * only for linux platform , windows is not supported!
+ * @param cmd. the command name needed to be executed
+ * only support linux commands
+ * @param result . the reference of command result.
+ * if execute 'ls' ,the result contains all file name in current dir
+ * attention that result is split by '\n',and each element contains '\n'
+ * @return
+ */
 void executeCMD(const char *cmd, vector<String *>& result)
 {
     char buf_ps[1024];
