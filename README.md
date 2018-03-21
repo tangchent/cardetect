@@ -1,8 +1,6 @@
 # cardetect
 
 implements Vehicle detection through cascade classifier.The cascade classifier is trained by OpenCV's demon app "opencv_traincascade"
-run shortcut:
-![image](https://github.com/ButBueatiful/dotvim/raw/master/screenshots/vim-screenshot.jpg)
 
 you can get the binary in the bin folder
 I will provide execute for windows and linux,and here are some Requirements
