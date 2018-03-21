@@ -58,7 +58,13 @@ int main(int argc, const char** argv)
         detectAndDisplay(frame);
         // end time
         float seconds = float( clock () - begin_time ) / CLOCKS_PER_SEC;
-        fprintf(stdout,"time cost: %.3f s\r",seconds);
+
+#ifdef _WIN32
+        fprintf(stdout,"filename: %s  time cost: %.3f s\r", filename, seconds);
+#else
+        //colorful print
+        fprintf(stdout,"filename : \033[0;36m%s\033[0m\ntime cost: \033[0;32m%.3f\033[0m s\r\n\33[2A", filename, seconds);
+#endif
         fflush(stdout);
 
         c = waitKey(10);
@@ -81,8 +87,15 @@ int main(int argc, const char** argv)
     //release window
     destroyWindow(window_name);
 
-    printf("\nexit...\n");
 
+#ifdef _WIN32
+    printf("\nexit...\n");
+#else
+    //   \33[1B         move cursor 1 line down
+    //   \033[0;31m     set color RED
+    //   \033[0m        set off
+    printf("\33[1B\n\033[0;31mexit...\033[0m\n");
+#endif
     return 0;
 }
 /**
