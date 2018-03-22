@@ -6,7 +6,7 @@ implements Vehicle detection through cascade classifier.The cascade classifier i
 
 you can get the binary in the [bin folder](https://github.com/tangchent/cardetect/tree/master/bin "bin folder")
 
-I will provide execute for windows and linux,and here are some Requirements
+I will provide execute for windows and linux,and here are some **Requirements**
 
 **Linux:**
     
@@ -26,8 +26,10 @@ I will provide execute for windows and linux,and here are some Requirements
     Requirements:
       1) DirectX 11
         From: https://www.microsoft.com/en-us/download/details.aspx?id=8109
-      2) MSVC14.0
+      2) MSVC 14.0
         From: https://www.microsoft.com/en-us/download/details.aspx?id=48145
+      3) MSVC 12.0
+      	From: https://www.microsoft.com/en-us/download/details.aspx?id=40784
 \###**Build Step**
 **Linux**
 
@@ -42,4 +44,8 @@ g++ -m64 -Wl,-O1 -o bin/cardetect bin/main.o -L/usr/local/opencv-2.4.10/lib -lop
 ``` bash
 cd bin/
 ./cardetect
+```
+**Windows**
+``` bash
+you can run the cardetect.exe directly if you have already installed the requirements.
 ```
