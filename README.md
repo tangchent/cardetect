@@ -45,7 +45,7 @@ g++ -m64 -Wl,-O1 -o bin/cardetect bin/main.o -L/usr/local/opencv-2.4.10/lib -lop
 **Windows**
 
 you need to install Micsoft Visual Studio
-i provide a Visual Studio 2015 solution in [ project folder](http://fanyi.youdao.com/) (include OpenCV library),you can download and build it.
+i provide a Visual Studio 2015 solution in [ project folder](https://github.com/tangchent/cardetect) (include OpenCV library),you can download and build it.
 
 \###**Run Step**
 
@@ -56,4 +56,4 @@ cd bin/
 ```
 **Windows**
 
-you can download [x64.zip file](http://fanyi.youdao.com/) ,if you use x64 system,download [x86.zip file](http://fanyi.youdao.com/) if you use x86 system.unzip the file, and you can run cardetect.exe directly if you hava DirectX 11 run enviroment.
+you can download [x64.zip file](https://github.com/tangchent/cardetect/blob/master/bin/x86.rar) ,if you use x64 system,download [x86.zip file](https://github.com/tangchent/cardetect/blob/master/bin/x86.rar) if you use x86 system.unzip the file, and you can run cardetect.exe directly if you hava DirectX 11 run enviroment.
