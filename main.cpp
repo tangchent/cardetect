@@ -183,8 +183,8 @@ void detectAndDisplay(Mat frame)
                                  cars, //result
                                  1.2, //scaleFactor
                                  3, //minNeighbors
-                                 CV_HAAR_SCALE_IMAGE | CV_HAAR_DO_ROUGH_SEARCH | CV_HAAR_FIND_BIGGEST_OBJECT, //flags
-                                 Size(32, 32), //minSize
+                                 CV_HAAR_SCALE_IMAGE | CV_HAAR_DO_ROUGH_SEARCH | CV_HAAR_FIND_BIGGEST_OBJECT, //flags,actually not used yet?
+                                 Size(16, 16), //minSize
                                  Size()); //maxSize
 
     for (size_t i = 0; i < cars.size(); i++) {
