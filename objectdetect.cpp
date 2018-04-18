@@ -62,7 +62,7 @@ bool ObjectDetect::readParameters(int argc, char **argv)
         }
         if (strcmp(argv[i], "-cam") == 0 && !fromVideo && !fromFile) {
             if (++i < argc) {
-                strcpy(cameraDevice, argv[i]);
+                cameraDevice = atoi(argv[i]);
                 fromCamera = true;
             }
             else {
@@ -70,6 +70,9 @@ bool ObjectDetect::readParameters(int argc, char **argv)
                 return false;
             }
         }
+    }
+    if (!fromFile && !fromVideo && !fromCamera) {
+        fromFile = true;
     }
     return true;
 }
@@ -101,7 +104,7 @@ bool ObjectDetect::init( void )
     } else if (fromCamera) {
         cap.open(cameraDevice);
         if (!cap.isOpened()) {
-            printf("--(!)Error open '%s'\n", cameraDevice);
+            printf("--(!)Error open device number:%d\n", cameraDevice);
             result = false;
         }
     } else {
@@ -229,9 +232,9 @@ Mat ObjectDetect::loadFrame(int step)
             strcat(filename, "\\");
             strcat(filename, imageFileames.at(index)->c_str());
 #else
+            strncpy(filename,imageFileames.at(index)->c_str(),imageFileames.at(index)->size());
             //remove '\n'
-            strncpy(filename,imageFileames.at(index)->c_str(),imageFileames.at(index)->size() - 1);
-            *(filename + imageFileames.at(index)->size()) = '\0';
+            *(filename + strlen(filename) - 1) = '\0';
 #endif
             //read file
             return imread(filename);
@@ -248,6 +251,8 @@ Mat ObjectDetect::loadFrame(int step)
             cap >> frameRead;
             currentFrame = 1;
         }
+    } else if (fromCamera) {
+        cap >> frameRead;
     }
     return frameRead;
 }
@@ -279,4 +284,70 @@ int ObjectDetect::detectObjects(Mat frame)
                                  Size()); //maxSize
 
     return objects.size();
+}
+
+/**
+ * get  function
+ *
+ * @param
+ * @return bool  fromFile
+ */
+bool ObjectDetect::isFromFile()
+{
+    return fromFile;
+}
+
+/**
+ * get  function
+ *
+ * @param
+ * @return bool  fromVideo
+ */
+bool ObjectDetect::isFromVideo()
+{
+    return fromVideo;
+}
+
+/**
+ * get  function
+ *
+ * @param
+ * @return bool  fromCamera
+ */
+bool ObjectDetect::isFromCamera()
+{
+    return fromCamera;
+}
+
+/**
+ * get  function
+ *
+ * @param
+ * @return char *  filename
+ */
+char * ObjectDetect::getFilename()
+{
+    return filename;
+}
+
+/**
+ * get  function
+ *
+ * @param
+ * @return char *  videoname
+ */
+char * ObjectDetect::getVideoname()
+{
+    return videoname;
+}
+
+/**
+ * get  function
+ *
+ * @param
+ * @return currentFrame
+ */
+int ObjectDetect::getCurrentFrame()
+{
+    return currentFrame;
 }
