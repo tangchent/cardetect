@@ -63,6 +63,10 @@ int main(int argc, char** argv)
             frame = objectDetect->loadFrame(step);
         }
 
+        if (frame.empty()) {
+            printf("\033[0;31mno frame input!\033[0m\n");
+            break;
+        }
         // start time
         const clock_t begin_time = clock();
         //detect and display
@@ -108,7 +112,7 @@ int main(int argc, char** argv)
     //   \33[1B         move cursor 1 line down
     //   \033[0;31m     set color RED
     //   \033[0m        set off
-    printf("\33[1B\n\033[0;31mexit...\033[0m\n");
+    printf("\33[1B\n\033[1;31mexit...\033[0m\n");
 #endif
     return 0;
 }
