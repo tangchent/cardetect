@@ -89,6 +89,7 @@ cd bin/
 **Windows**
 
 you can download [x64.zip file](https://github.com/tangchent/cardetect/blob/master/bin/x86.rar) ,if you use x64 system,download [x86.zip file](https://github.com/tangchent/cardetect/blob/master/bin/x86.rar) if you use x86 system.unzip the file, and you can run cardetect.exe directly if you hava DirectX 11 run enviroment.
+<<<<<<< HEAD
 \###**Key Instructions **
 
 key 's' : Stop/Continue auto play,only aviliable in read from file or video
@@ -99,6 +100,16 @@ key 'd' : Forward 1 frame/picture,only aviliable in read from file or video
 
 key 'k' : Back 60 frames / 5 pictures,only aviliable in read from file or video
 
+=======
+
+
+\###**Key Instructions **
+
+key 's' : Stop/Continue auto play,only aviliable in read from file or video
+key 'a' : Back 1 frame/picture,only aviliable in read from file or video
+key 'd' : Forward 1 frame/picture,only aviliable in read from file or video
+key 'k' : Back 60 frames / 5 pictures,only aviliable in read from file or video
+>>>>>>> master
 key 'l ' : Forward 60 frames / 5 pictures,only aviliable in read from file or video
 
 key 'ESC' : exit
