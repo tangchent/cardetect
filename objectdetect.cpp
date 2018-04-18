@@ -63,12 +63,8 @@ bool ObjectDetect::readParameters(int argc, char **argv)
         if (strcmp(argv[i], "-cam") == 0 && !fromVideo && !fromFile) {
             if (++i < argc) {
                 cameraDevice = atoi(argv[i]);
-                fromCamera = true;
             }
-            else {
-                usage();
-                return false;
-            }
+            fromCamera = true;
         }
     }
     if (!fromFile && !fromVideo && !fromCamera) {
@@ -186,8 +182,14 @@ void ObjectDetect::readImageSequenceFiles( void )
     strcpy(cmd, "ls ");
     strcat(cmd, filedir);
     len = strlen(cmd);
-    *(cmd + len) = '*';
-    *(cmd + len + 1) = '\0';
+    if (*(cmd + len - 1) != '/') {
+        *(cmd + len) = '/';
+        *(cmd + len + 1) = '*';
+        *(cmd + len + 2) = '\0';
+    } else {
+        *(cmd + len) = '*';
+        *(cmd + len + 1) = '\0';
+    }
     strcpy(ps, cmd);
     if ((ptr = popen(ps, "r")) != NULL) {
         while (fgets(buf_ps, 1024, ptr) != NULL) {
