@@ -56,8 +56,12 @@ cd bin/
 By default,read the images from the current directory *data* and load the classifier from *cascade. xml*.
 You can use thsi options:
 >-v: read video files.
+
 >-d: read the file from the directory, note that the directory can only contain image files, default:./data/.
+
 >-c: loaded cascade classifier file name, default: cascade. xml.
+
+>-cam: open camera.
 ``` bash
 ./objectdetect  [-v videofilename] [-c cascadename] [-d datadirctory] [-cam [id]]
 ```
@@ -67,7 +71,7 @@ read frame from video
 cd bin/
 ./objectdetect -v video1.avi
 ```
-read frame from directory
+read frame from file
 ``` bash
 cd bin/
 ./objectdetect -d data/
@@ -85,3 +89,14 @@ cd bin/
 **Windows**
 
 you can download [x64.zip file](https://github.com/tangchent/cardetect/blob/master/bin/x86.rar) ,if you use x64 system,download [x86.zip file](https://github.com/tangchent/cardetect/blob/master/bin/x86.rar) if you use x86 system.unzip the file, and you can run cardetect.exe directly if you hava DirectX 11 run enviroment.
+
+
+\###**Key Instructions **
+
+key 's' : Stop/Continue auto play,only aviliable in read from file or video
+key 'a' : Back 1 frame/picture,only aviliable in read from file or video
+key 'd' : Forward 1 frame/picture,only aviliable in read from file or video
+key 'k' : Back 60 frames / 5 pictures,only aviliable in read from file or video
+key 'l ' : Forward 60 frames / 5 pictures,only aviliable in read from file or video
+
+key 'ESC' : exit
