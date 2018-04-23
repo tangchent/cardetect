@@ -89,7 +89,7 @@ bool ObjectDetect::init( void )
     }
 
     if (fromFile) {
-        readImageSequenceFiles();
+        readImageSequenceFiles(filedir);
         printf("image directory: '%s'\n", filedir);
     } else if (fromVideo) {
         cap.open(videoname);
@@ -104,7 +104,7 @@ bool ObjectDetect::init( void )
             result = false;
         }
     } else {
-        readImageSequenceFiles();
+        readImageSequenceFiles(filedir);
         printf("image directory: '%s'\n", filedir);
     }
     return result;
@@ -131,13 +131,13 @@ inline void ObjectDetect::usage( void )
 * @param result . the reference of result.
 * @return
 */
-void ObjectDetect::readImageSequenceFiles( void )
+void ObjectDetect::readImageSequenceFiles(char * path)
 {
     imageFileames.clear();
 
     string * str = NULL;
     char tmpDirSpec[MAX_PATH + 1];
-    sprintf(tmpDirSpec, "%s\\*", imgFilePath);
+    sprintf(tmpDirSpec, "%s\\*", path);
 
     WIN32_FIND_DATA f;
     HANDLE h = FindFirstFile(tmpDirSpec, &f);
@@ -168,7 +168,7 @@ void ObjectDetect::readImageSequenceFiles( void )
 * attention that result is split by '\n',and each element contains '\n'
 * @return
 */
-void ObjectDetect::readImageSequenceFiles( void )
+void ObjectDetect::readImageSequenceFiles( char * path )
 {
     char buf_ps[1024];
     char ps[1024];
@@ -180,7 +180,7 @@ void ObjectDetect::readImageSequenceFiles( void )
     imageFileames.clear();
 
     strcpy(cmd, "ls ");
-    strcat(cmd, filedir);
+    strcat(cmd, path);
     len = strlen(cmd);
     if (*(cmd + len - 1) != '/') {
         *(cmd + len) = '/';

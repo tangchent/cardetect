@@ -37,9 +37,9 @@ public:
     int    getCurrentFrame();
 
 #if defined WIN32 || defined _WIN32
-    void readImageSequenceFiles( void );
+    void readImageSequenceFiles( char * path );
 #else
-    void readImageSequenceFiles( void );
+    void readImageSequenceFiles( char * path );
 #endif
     Mat loadFrame(int step = 1);
     int detectObjects(Mat frame);
