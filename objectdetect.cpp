@@ -107,6 +107,7 @@ bool ObjectDetect::init( void )
         readImageSequenceFiles(filedir);
         printf("image directory: '%s'\n", filedir);
     }
+    initFinish = result;
     return result;
 }
 /**

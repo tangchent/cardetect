@@ -62,6 +62,7 @@ private:
     bool fromFile;
     bool fromVideo;
     bool fromCamera;
+    bool initFinish;
 };
 
 #endif // OBJECTDETECT_H

@@ -1,3 +1,17 @@
+#if 1
+#include "mainwindow.h"
+#include <QApplication>
+
+int main(int argc, char *argv[])
+{
+    QApplication a(argc, argv);
+    MainWindow w(0,argc,argv);
+    w.show();
+
+    return a.exec();
+}
+
+#else
 #include <iostream>
 #include <vector>
 #include <stdio.h>
@@ -116,3 +130,4 @@ int main(int argc, char** argv)
 #endif
     return 0;
 }
+#endif
