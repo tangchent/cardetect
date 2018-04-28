@@ -34,6 +34,7 @@ public:
     bool isFromCamera();
     char * getFilename();
     char * getVideoname();
+    int	   getCameraDevice();
     int    getCurrentFrame();
 
 #if defined WIN32 || defined _WIN32

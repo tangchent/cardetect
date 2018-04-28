@@ -63,6 +63,11 @@ bool ObjectDetect::readParameters(int argc, char **argv)
         if (strcmp(argv[i], "-cam") == 0 && !fromVideo && !fromFile) {
             if (++i < argc) {
                 cameraDevice = atoi(argv[i]);
+                if (*(argv[i]) != '0') {
+                    if (cameraDevice == 0) {
+                        --i;
+                    }
+                }
             }
             fromCamera = true;
         }
@@ -342,6 +347,19 @@ char * ObjectDetect::getVideoname()
 {
     return videoname;
 }
+
+/**
+* get  function
+*
+* @param
+* @return int  cameraDevice
+*/
+int ObjectDetect::getCameraDevice()
+{
+    return cameraDevice;
+}
+
+
 
 /**
  * get  function
