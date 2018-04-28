@@ -86,6 +86,9 @@ int main(int argc, char** argv)
         } else if (objectDetect->isFromVideo()) {
             fprintf(stdout,"videoname: %s  time cost: %.3f s\r", objectDetect->getVideoname(), seconds);
         }
+        lse if (objectDetect->isFromCamera()) {
+            fprintf(stdout, "camera index: %d  time cost: %.3f s\r", objectDetect->getCameraDevice(), seconds);
+        }
 #else
         if (objectDetect->isFromFile()) {
             //colorful print
