@@ -15,9 +15,18 @@ public:
     explicit MainWindow(QWidget *parent = 0, int argc = 0, char **argv = NULL);
     ~MainWindow();
 
+private slots:
+    void on_openClassfilerButton_clicked();
+
+    void on_openDirectoryButton_clicked();
+
+    void on_openVideoButton_clicked();
+
+    void on_openCameraButton_clicked();
+
 private:
     Ui::MainWindow *ui;
-    ObjectDetect * objectDetect;
+    ObjectDetect * objectDetector;
 };
 
 #endif // MAINWINDOW_H

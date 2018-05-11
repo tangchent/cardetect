@@ -13,70 +13,177 @@
   <property name="windowTitle">
    <string>ObjectDetect</string>
   </property>
-  <widget class="QPushButton" name="openCameraButton">
-   <property name="geometry">
-    <rect>
-     <x>680</x>
-     <y>210</y>
-     <width>100</width>
-     <height>25</height>
-    </rect>
-   </property>
-   <property name="text">
-    <string>OpenCamera</string>
-   </property>
-  </widget>
-  <widget class="QLabel" name="imageLabel">
+  <widget class="QTabWidget" name="tabWidget">
    <property name="geometry">
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>640</width>
-     <height>480</height>
+     <width>800</width>
+     <height>600</height>
     </rect>
    </property>
-   <property name="text">
-    <string/>
+   <property name="currentIndex">
+    <number>0</number>
    </property>
-  </widget>
-  <widget class="QPushButton" name="openDirectoryButton">
-   <property name="geometry">
-    <rect>
-     <x>680</x>
-     <y>250</y>
-     <width>100</width>
-     <height>25</height>
-    </rect>
-   </property>
-   <property name="text">
-    <string>OpenDirectory</string>
-   </property>
-  </widget>
-  <widget class="QPushButton" name="openVideoButton">
-   <property name="geometry">
-    <rect>
-     <x>680</x>
-     <y>290</y>
-     <width>100</width>
-     <height>25</height>
-    </rect>
-   </property>
-   <property name="text">
-    <string>OpenVideo</string>
-   </property>
-  </widget>
-  <widget class="QPushButton" name="openClassfilerButton">
-   <property name="geometry">
-    <rect>
-     <x>680</x>
-     <y>170</y>
-     <width>100</width>
-     <height>25</height>
-    </rect>
-   </property>
-   <property name="text">
-    <string>OpenClassifier</string>
-   </property>
+   <widget class="QWidget" name="tabDetect">
+    <attribute name="title">
+     <string>Detect</string>
+    </attribute>
+    <widget class="QLabel" name="imageLabel">
+     <property name="geometry">
+      <rect>
+       <x>0</x>
+       <y>0</y>
+       <width>640</width>
+       <height>600</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string/>
+     </property>
+    </widget>
+    <widget class="QGroupBox" name="groupBox">
+     <property name="geometry">
+      <rect>
+       <x>640</x>
+       <y>-20</y>
+       <width>151</width>
+       <height>580</height>
+      </rect>
+     </property>
+     <property name="title">
+      <string/>
+     </property>
+     <widget class="QLabel" name="cascadeClassfierLabel">
+      <property name="geometry">
+       <rect>
+        <x>20</x>
+        <y>230</y>
+        <width>130</width>
+        <height>151</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Cascade Classfiler not loaded</string>
+      </property>
+      <property name="textFormat">
+       <enum>Qt::PlainText</enum>
+      </property>
+      <property name="alignment">
+       <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
+      </property>
+      <property name="wordWrap">
+       <bool>true</bool>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="openDirectoryButton">
+      <property name="geometry">
+       <rect>
+        <x>20</x>
+        <y>110</y>
+        <width>100</width>
+        <height>25</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>OpenDirectory</string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="openClassfilerButton">
+      <property name="geometry">
+       <rect>
+        <x>20</x>
+        <y>30</y>
+        <width>100</width>
+        <height>25</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>OpenClassifier</string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="openCameraButton">
+      <property name="geometry">
+       <rect>
+        <x>20</x>
+        <y>70</y>
+        <width>100</width>
+        <height>25</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>OpenCamera</string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="openVideoButton">
+      <property name="geometry">
+       <rect>
+        <x>20</x>
+        <y>150</y>
+        <width>100</width>
+        <height>25</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>OpenVideo</string>
+      </property>
+     </widget>
+     <widget class="QLabel" name="label">
+      <property name="geometry">
+       <rect>
+        <x>23</x>
+        <y>190</y>
+        <width>131</width>
+        <height>20</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Current Status :&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+      </property>
+      <property name="textFormat">
+       <enum>Qt::RichText</enum>
+      </property>
+      <property name="scaledContents">
+       <bool>true</bool>
+      </property>
+      <property name="wordWrap">
+       <bool>true</bool>
+      </property>
+     </widget>
+     <widget class="QLabel" name="fileLable">
+      <property name="geometry">
+       <rect>
+        <x>20</x>
+        <y>400</y>
+        <width>130</width>
+        <height>151</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>File not loaded</string>
+      </property>
+      <property name="textFormat">
+       <enum>Qt::PlainText</enum>
+      </property>
+      <property name="alignment">
+       <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
+      </property>
+      <property name="wordWrap">
+       <bool>true</bool>
+      </property>
+     </widget>
+    </widget>
+   </widget>
+   <widget class="QWidget" name="tabTrain">
+    <attribute name="title">
+     <string>Train</string>
+    </attribute>
+   </widget>
+   <widget class="QWidget" name="tabDatabase">
+    <attribute name="title">
+     <string>Database</string>
+    </attribute>
+   </widget>
   </widget>
  </widget>
  <resources/>
