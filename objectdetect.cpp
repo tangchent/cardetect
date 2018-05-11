@@ -355,3 +355,53 @@ int ObjectDetect::getCurrentFrame()
 {
     return currentFrame;
 }
+
+/**
+ * set  function
+ *
+ * @param
+ * @return true if copy success
+ */
+bool ObjectDetect::setObjectCascadeName( const char * name )
+{
+    if (strlen(name) > (BUFFER_LENGTH - 1)) return false;
+    strcpy(objectCascadeName,name);
+    return true;
+}
+
+/**
+ * set  function
+ *
+ * @param
+ * @return true if copy success
+ */
+bool ObjectDetect::setFileDirectory( const char * name )
+{
+    if (fromVideo || fromCamera) {
+        return false;
+    }
+    if (strlen(name) > (BUFFER_LENGTH - 1)) {
+        return false;
+    }
+    strcpy(filedir,name);
+    return true;
+}
+
+/**
+ * set  function
+ *
+ * @param
+ * @return true if copy success
+ */
+bool ObjectDetect::setVideoname( const char * name )
+{
+    if (fromFile || fromCamera) {
+        return false;
+    }
+    if (strlen(name) > (BUFFER_LENGTH - 1)) {
+        return false;
+    }
+    strcpy(videoname,name);
+    fromVideo = true;
+    return true;
+}

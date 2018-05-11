@@ -16,7 +16,7 @@
 #endif
 #define CAMERA_DEVICE	0
 #define CASCADE_NAME	"cascade.xml"
-
+#define BUFFER_LENGTH   256
 
 using namespace cv;
 using namespace std;
@@ -34,6 +34,9 @@ public:
     bool isFromCamera();
     char * getFilename();
     char * getVideoname();
+    bool setObjectCascadeName( const char * name );
+    bool setFileDirectory( const char * name );
+    bool setVideoname( const char * name );
     int    getCurrentFrame();
 
 #if defined WIN32 || defined _WIN32
@@ -53,11 +56,11 @@ private:
     vector<string *> imageFileames;
     int index;
     int currentFrame;
-    int  cameraDevice           = CAMERA_DEVICE;
-    char objectCascadeName[128] = CASCADE_NAME; //the cascades file name
-    char filedir[256]           = FILE_DIR;
-    char filename[256];
-    char videoname[256];
+    int  cameraDevice                     = CAMERA_DEVICE;
+    char objectCascadeName[BUFFER_LENGTH] = CASCADE_NAME; //the cascades file name whit path
+    char filedir  [BUFFER_LENGTH]         = FILE_DIR;
+    char filename [BUFFER_LENGTH];
+    char videoname[BUFFER_LENGTH];
     bool stop;
     bool fromFile;
     bool fromVideo;
