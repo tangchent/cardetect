@@ -282,7 +282,8 @@ int ObjectDetect::detectObjects(Mat frame)
                                  objects, //result
                                  1.2, //scaleFactor
                                  3, //minNeighbors
-                                 CV_HAAR_SCALE_IMAGE | CV_HAAR_DO_ROUGH_SEARCH | CV_HAAR_FIND_BIGGEST_OBJECT, //flags,actually not used yet?
+                                 0 | CV_HAAR_SCALE_IMAGE,
+                                 //CV_HAAR_SCALE_IMAGE | CV_HAAR_DO_ROUGH_SEARCH | CV_HAAR_FIND_BIGGEST_OBJECT, //flags,actually not used yet?
                                  Size(12, 12), //minSize
                                  Size()); //maxSize
 
