@@ -7,7 +7,8 @@ ObjectDetect::ObjectDetect():
     stop(false),
     fromFile(false),
     fromVideo(false),
-    fromCamera(false)
+    fromCamera(false),
+    initFinish(false)
 {
     imageFilenames.resize(1024);
 }
@@ -16,6 +17,9 @@ ObjectDetect::~ObjectDetect()
 {
     for (vector<string *>::iterator itr = imageFilenames.begin(); itr != imageFilenames.end(); ++itr) {
         delete *itr;
+    }
+    if (cap.isOpened()) {
+        cap.release();
     }
 }
 
@@ -305,6 +309,7 @@ void ObjectDetect::freeFilenames()
     for (vector<string *>::iterator itr = imageFilenames.begin(); itr != imageFilenames.end(); ++itr) {
         delete *itr;
     }
+    initFinish = false;
 }
 
 /**
@@ -318,6 +323,7 @@ void ObjectDetect::closeCapture()
     if (cap.isOpened()) {
         cap.release();
     }
+    initFinish = false;
 }
 
 /**
@@ -351,6 +357,17 @@ bool ObjectDetect::isFromVideo()
 bool ObjectDetect::isFromCamera()
 {
     return fromCamera;
+}
+
+/**
+ * get  function
+ *
+ * @param
+ * @return bool  initFinish
+ */
+bool ObjectDetect::isInitialized()
+{
+    return initFinish;
 }
 
 /**
@@ -423,12 +440,29 @@ char * ObjectDetect::getVideoname()
  * get  function
  *
  * @param
- * @return char *  videoname
+ * @return char *  VideoFrames
  */
 int    ObjectDetect::getVideoFrames()
 {
     if (fromVideo) {
         return cap.get(CV_CAP_PROP_FRAME_COUNT);
+    } else {
+        return -1;
+    }
+}
+
+/**
+ * get  function
+ *
+ * @param
+ * @return char *  videoname
+ */
+int    ObjectDetect::getFileCount()
+{
+    if (fromFile) {
+        return imageFilenames.size();
+    } else {
+        return -1;
     }
 }
 
@@ -463,6 +497,17 @@ int    ObjectDetect::getCameraDevice()
 int ObjectDetect::getCurrentFrame()
 {
     return currentFrame;
+}
+
+/**
+ * get  function
+ *
+ * @param
+ * @return index
+ */
+int ObjectDetect::getCurrentIndex()
+{
+    return index;
 }
 
 /**

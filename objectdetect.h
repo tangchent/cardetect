@@ -32,20 +32,23 @@ public:
     bool isFromFile();
     bool isFromVideo();
     bool isFromCamera();
+    bool isInitialized();
     void setFromFile(bool val);
     void setFromVideo(bool val);
     void setFromCamera(bool val);
     char * getFileDirectory();
     char * getFilename();
     char * getVideoname();
-    int    getVideoFrames();
     char * getCascadeName();
+    int    getFileCount();
+    int    getVideoFrames();
     int    getCameraDevice();
+    int    getCurrentFrame();
+    int    getCurrentIndex();
     bool setObjectCascadeName( const char * name );
     bool setFileDirectory( const char * name );
     bool setVideoname( const char * name );
     bool setCameraDevice(int idx);
-    int    getCurrentFrame();
 
 #if defined WIN32 || defined _WIN32
     void readImageSequenceFiles( char * path );
