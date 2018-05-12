@@ -176,8 +176,8 @@
     <widget class="QPushButton" name="detectButton">
      <property name="geometry">
       <rect>
-       <x>60</x>
-       <y>620</y>
+       <x>170</x>
+       <y>615</y>
        <width>85</width>
        <height>25</height>
       </rect>
@@ -189,8 +189,8 @@
     <widget class="QPushButton" name="previousButton">
      <property name="geometry">
       <rect>
-       <x>160</x>
-       <y>620</y>
+       <x>270</x>
+       <y>615</y>
        <width>85</width>
        <height>25</height>
       </rect>
@@ -202,8 +202,8 @@
     <widget class="QPushButton" name="nextButton">
      <property name="geometry">
       <rect>
-       <x>260</x>
-       <y>620</y>
+       <x>370</x>
+       <y>615</y>
        <width>85</width>
        <height>25</height>
       </rect>
@@ -215,14 +215,30 @@
     <widget class="QSlider" name="processBar">
      <property name="geometry">
       <rect>
-       <x>370</x>
-       <y>625</y>
+       <x>480</x>
+       <y>620</y>
        <width>250</width>
        <height>16</height>
       </rect>
      </property>
+     <property name="maximum">
+      <number>1000000</number>
+     </property>
      <property name="orientation">
       <enum>Qt::Horizontal</enum>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="restartButton">
+     <property name="geometry">
+      <rect>
+       <x>70</x>
+       <y>615</y>
+       <width>85</width>
+       <height>25</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Restart</string>
      </property>
     </widget>
    </widget>

@@ -30,7 +30,8 @@ inline void myIntToArray(int number,char * array)
 MainWindow::MainWindow(QWidget *parent, int argc, char **argv) :
     QWidget(parent),
     mainWindow(new Ui::MainWindow),
-    informationWindow(NULL)
+    informationWindow(NULL),
+    configChange(false)
 {
     mainWindow->setupUi(this);
 
@@ -89,6 +90,33 @@ MainWindow::~MainWindow()
     delete objectDetector;
     delete mainWindow;
     if (informationWindow != NULL) delete informationWindow;
+    if (timer != NULL) {
+        timer->stop();
+        delete timer;
+    }
+}
+
+void MainWindow::detect(int step)
+{
+    cv::Mat frame;
+    frame = objectDetector->loadFrame(step);
+    // start time
+    const clock_t begin_time = clock();
+    objectDetector->detectObjects(frame);
+    // end time
+    float seconds = float(clock() - begin_time) / CLOCKS_PER_SEC;
+    //colorful print
+    fprintf(stdout," time cost: \033[0;32m%.3f\033[0m s %d\r", seconds,frame.channels());
+    fflush(stdout);
+    for (size_t i = 0; i < objectDetector->objects.size(); i++) {
+        //draw rectangle
+        rectangle(frame, objectDetector->objects[i], cv::Scalar(0, 0, 255));
+    }
+    if (frame.channels() == 3) {
+        cv::cvtColor(frame,frame,cv::COLOR_BGR2RGB);
+    }
+    QImage qimage = QImage(static_cast<uchar *>(frame.data),frame.cols,frame.rows,QImage::Format_RGB888);
+    mainWindow->imageLabel->setPixmap(QPixmap::fromImage(qimage));
 }
 
 void MainWindow::on_openClassfilerButton_clicked()
@@ -105,6 +133,7 @@ void MainWindow::on_openClassfilerButton_clicked()
             mainWindow->cascadeClassfierLabel->setText(tr("Cascade Classfiler not loaded"));
         }
     }
+    configChange = true;
 }
 
 void MainWindow::on_openDirectoryButton_clicked()
@@ -129,6 +158,7 @@ void MainWindow::on_openDirectoryButton_clicked()
                 mainWindow->openDirectoryButton->setText(tr("Change"));
                 mainWindow->openCameraButton->setEnabled(false);
                 mainWindow->openVideoButton->setEnabled(false);
+                configChange = true;
             } else {
                 mainWindow->fileLable->setText(tr("File not loaded"));
             }
@@ -157,6 +187,7 @@ void MainWindow::on_openVideoButton_clicked()
                 mainWindow->openVideoButton->setText(tr("Change"));
                 mainWindow->openCameraButton->setEnabled(false);
                 mainWindow->openDirectoryButton->setEnabled(false);
+                configChange = true;
             } else {
                 mainWindow->fileLable->setText(tr("File not loaded"));
             }
@@ -185,6 +216,7 @@ void MainWindow::on_openCameraButton_clicked()
             mainWindow->openCameraButton->setText(tr("Change"));
             mainWindow->openVideoButton->setEnabled(false);
             mainWindow->openDirectoryButton->setEnabled(false);
+            configChange = true;
         } else {
             mainWindow->fileLable->setText(tr("File not loaded"));
         }
@@ -193,37 +225,159 @@ void MainWindow::on_openCameraButton_clicked()
 
 void MainWindow::on_detectButton_clicked()
 {
-    objectDetector->init();
-    if (informationWindow == NULL) {
-        informationWindow = new InformationWindow();
-        informationWindow->show();
+    if (mainWindow->detectButton->text() == (QString)"Detect") {
+        if (configChange) {
+            if (objectDetector->isFromCamera() || objectDetector->isFromVideo()) {
+                objectDetector->closeCapture();
+            } else if (objectDetector->isFromFile()) {
+                objectDetector->freeFilenames();
+            }
+            objectDetector->init();
+        }
+        if (!objectDetector->isInitialized()) {
+            objectDetector->init();
+            if (informationWindow == NULL) {
+                informationWindow = new InformationWindow();
+                informationWindow->show();
+            } else {
+                delete informationWindow;
+                informationWindow = new InformationWindow();
+                informationWindow->show();
+            }
+            timer->start(1);
+            mainWindow->detectButton->setText((QString)"Stop");
+            mainWindow->openClassfilerButton->setEnabled(false);
+            mainWindow->openCameraButton->setEnabled(false);
+            mainWindow->openVideoButton->setEnabled(false);
+            mainWindow->openDirectoryButton->setEnabled(false);
+            if (objectDetector->isFromFile()) {
+                mainWindow->processBar->setMaximum(objectDetector->getFileCount());
+            } else if (objectDetector->isFromVideo()) {
+                mainWindow->processBar->setMaximum(objectDetector->getVideoFrames());
+            }
+        } else {
+            if (informationWindow != NULL) {
+                informationWindow->show();
+            }
+            timer->start(1);
+            mainWindow->detectButton->setText((QString)"Stop");
+            mainWindow->openClassfilerButton->setEnabled(false);
+            mainWindow->openCameraButton->setEnabled(false);
+            mainWindow->openVideoButton->setEnabled(false);
+            mainWindow->openDirectoryButton->setEnabled(false);
+        }
     } else {
-        delete informationWindow;
-        informationWindow = new InformationWindow();
-        informationWindow->show();
+        mainWindow->detectButton->setText((QString)"Detect");
+        timer->stop();
+        mainWindow->openClassfilerButton->setEnabled(true);
+        if (objectDetector->isFromCamera()) {
+            mainWindow->openCameraButton->setEnabled(true);
+        } else if (objectDetector->isFromFile()) {
+            mainWindow->openDirectoryButton->setEnabled(true);
+        } else if (objectDetector->isFromVideo()) {
+            mainWindow->openVideoButton->setEnabled(true);
+        }
     }
-    timer->start(1);
 }
 
 void MainWindow::on_timeout()
 {
-    cv::Mat frame;
-    frame = objectDetector->loadFrame(1);
-    // start time
-    const clock_t begin_time = clock();
-    objectDetector->detectObjects(frame);
-    // end time
-    float seconds = float(clock() - begin_time) / CLOCKS_PER_SEC;
-    //colorful print
-    fprintf(stdout," time cost: \033[0;32m%.3f\033[0m s %d\r", seconds,frame.channels());
-    fflush(stdout);
-    for (size_t i = 0; i < objectDetector->objects.size(); i++) {
-        //draw rectangle
-        rectangle(frame, objectDetector->objects[i], cv::Scalar(0, 0, 255));
+    detect(1);
+    if (objectDetector->isFromFile()) {
+        mainWindow->processBar->setSliderPosition(objectDetector->getCurrentIndex());
+    } else if (objectDetector->isFromVideo()) {
+        mainWindow->processBar->setSliderPosition(objectDetector->getCurrentFrame());
     }
-    if (frame.channels() == 3) {
-        cv::cvtColor(frame,frame,cv::COLOR_BGR2RGB);
+}
+
+void MainWindow::on_restartButton_clicked()
+{
+    if (mainWindow->detectButton->text() == (QString)"Stop") {
+        timer->stop();
     }
-    QImage qimage = QImage(static_cast<uchar *>(frame.data),frame.cols,frame.rows,QImage::Format_RGB888);
-    mainWindow->imageLabel->setPixmap(QPixmap::fromImage(qimage));
+    QMessageBox message(QMessageBox::Question,"Restart","Really to Restart?",QMessageBox::No|QMessageBox::Yes,NULL);
+    if (message.exec()==QMessageBox::Yes) {
+        if (objectDetector->isInitialized()) {
+            if (objectDetector->isFromCamera() || objectDetector->isFromVideo()) {
+                objectDetector->closeCapture();
+            } else if (objectDetector->isFromFile()) {
+                objectDetector->freeFilenames();
+            }
+            objectDetector->init();
+            if (informationWindow == NULL) {
+                informationWindow = new InformationWindow();
+                informationWindow->show();
+            } else {
+                delete informationWindow;
+                informationWindow = new InformationWindow();
+                informationWindow->show();
+            }
+            timer->start(1);
+            mainWindow->detectButton->setText((QString)"Stop");
+            mainWindow->openClassfilerButton->setEnabled(false);
+            mainWindow->openCameraButton->setEnabled(false);
+            mainWindow->openVideoButton->setEnabled(false);
+            mainWindow->openDirectoryButton->setEnabled(false);
+        } else {
+            objectDetector->init();
+            if (informationWindow == NULL) {
+                informationWindow = new InformationWindow();
+                informationWindow->show();
+            } else {
+                delete informationWindow;
+                informationWindow = new InformationWindow();
+                informationWindow->show();
+            }
+            timer->start(1);
+            mainWindow->detectButton->setText((QString)"Stop");
+            mainWindow->openClassfilerButton->setEnabled(false);
+            mainWindow->openCameraButton->setEnabled(false);
+            mainWindow->openVideoButton->setEnabled(false);
+            mainWindow->openDirectoryButton->setEnabled(false);
+            if (objectDetector->isFromFile()) {
+                mainWindow->processBar->setMaximum(objectDetector->getFileCount());
+            } else if (objectDetector->isFromVideo()) {
+                mainWindow->processBar->setMaximum(objectDetector->getVideoFrames());
+            }
+        }
+    } else {
+        if (mainWindow->detectButton->text() == (QString)"Stop") {
+            timer->start(1);
+        }
+    }
+}
+
+void MainWindow::on_processBar_sliderMoved(int position)
+{
+    int index = 0;
+    int step;
+    if (objectDetector->isInitialized()) {
+        if (objectDetector->isFromVideo()) {
+            index = objectDetector->getCurrentFrame();
+        } else if (objectDetector->isFromFile()) {
+            index = objectDetector->getCurrentIndex();
+        }
+        if (objectDetector->isFromVideo() || objectDetector->isFromFile()) {
+            step = position - index;
+            detect(step);
+        }
+    }
+}
+
+void MainWindow::on_previousButton_clicked()
+{
+    if (objectDetector->isInitialized()) {
+        if (objectDetector->isFromVideo() || objectDetector->isFromFile()) {
+            detect(-1);
+        }
+    }
+}
+
+void MainWindow::on_nextButton_clicked()
+{
+    if (objectDetector->isInitialized()) {
+        if (objectDetector->isFromVideo() || objectDetector->isFromFile()) {
+            detect(1);
+        }
+    }
 }
