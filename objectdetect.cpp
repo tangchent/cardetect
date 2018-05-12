@@ -226,7 +226,6 @@ Mat ObjectDetect::loadFrame(int step)
 {
     Mat frameRead;
     if (fromFile) {
-        index += step;
         if (index < 0) index = (int)(imageFileames.size() - 1);
         if (index > (int)(imageFileames.size() - 1)) index = 0;
         if (imageFileames.size() == 0) {
@@ -241,17 +240,18 @@ Mat ObjectDetect::loadFrame(int step)
 #else
             strncpy(filename,imageFileames.at(index)->c_str(),imageFileames.at(index)->size());
             //remove '\n'
-            *(filename + strlen(filename) - 1) = '\0';
+            *(filename + imageFileames.at(index)->size() - 1) = '\0';
 #endif
+            index += step;
             //read file
             return imread(filename);
         }
     } else if (fromVideo) {
-        currentFrame += step;
         if (currentFrame < 0)	currentFrame = 0;
         if (currentFrame > (cap.get(CV_CAP_PROP_FRAME_COUNT) - 1))	currentFrame = 0;
         cap.set(CV_CAP_PROP_POS_FRAMES, (double)currentFrame);
         cap >> frameRead;
+        currentFrame += step;
         //try to restart
         if(frameRead.empty()) {
             cap.set( CV_CAP_PROP_POS_FRAMES,0);
