@@ -32,11 +32,19 @@ public:
     bool isFromFile();
     bool isFromVideo();
     bool isFromCamera();
+    void setFromFile(bool val);
+    void setFromVideo(bool val);
+    void setFromCamera(bool val);
+    char * getFileDirectory();
     char * getFilename();
     char * getVideoname();
+    int    getVideoFrames();
+    char * getCascadeName();
+    int    getCameraDevice();
     bool setObjectCascadeName( const char * name );
     bool setFileDirectory( const char * name );
     bool setVideoname( const char * name );
+    bool setCameraDevice(int idx);
     int    getCurrentFrame();
 
 #if defined WIN32 || defined _WIN32
@@ -46,6 +54,8 @@ public:
 #endif
     Mat loadFrame(int step = 1);
     int detectObjects(Mat frame);
+    void freeFilenames();
+    void closeCapture();
 
     vector<Rect> objects;
 
@@ -53,7 +63,7 @@ private:
     CascadeClassifier objectCascadeClassifier;
     Mat frame;
     VideoCapture cap;
-    vector<string *> imageFileames;
+    vector<string *> imageFilenames;
     int index;
     int currentFrame;
     int  cameraDevice                     = CAMERA_DEVICE;

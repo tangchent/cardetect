@@ -9,12 +9,12 @@ ObjectDetect::ObjectDetect():
     fromVideo(false),
     fromCamera(false)
 {
-    imageFileames.resize(1024);
+    imageFilenames.resize(1024);
 }
 
 ObjectDetect::~ObjectDetect()
 {
-    for (vector<string *>::iterator itr = imageFileames.begin(); itr != imageFileames.end(); ++itr) {
+    for (vector<string *>::iterator itr = imageFilenames.begin(); itr != imageFilenames.end(); ++itr) {
         delete *itr;
     }
 }
@@ -81,6 +81,8 @@ bool ObjectDetect::readParameters(int argc, char **argv)
 bool ObjectDetect::init( void )
 {
     bool result = true;
+    index = 0;
+    currentFrame = 0;
     if (!objectCascadeClassifier.load(objectCascadeName)) {
         printf("--(!)Error loading '%s'\n", objectCascadeName);
         result = false;
@@ -90,7 +92,7 @@ bool ObjectDetect::init( void )
 
     if (fromFile) {
         readImageSequenceFiles(filedir);
-        printf("image directory: '%s'\n", filedir);
+        printf("image directory: '%s', total files: %d\n", filedir, imageFilenames.size());
     } else if (fromVideo) {
         cap.open(videoname);
         if (!cap.isOpened()) {
@@ -150,7 +152,7 @@ void ObjectDetect::readImageSequenceFiles(char * path)
         {
             str = new string(f.cFileName);
             if (str != NULL) {
-                imageFileames.push_back(str);
+                imageFilenames.push_back(str);
             }
         } while (FindNextFile(h, &f));
 
@@ -178,7 +180,7 @@ void ObjectDetect::readImageSequenceFiles( char * path )
     FILE * ptr;
     string * str = NULL;
 
-    imageFileames.clear();
+    imageFilenames.clear();
 
     strcpy(cmd, "ls ");
     strcat(cmd, path);
@@ -196,7 +198,7 @@ void ObjectDetect::readImageSequenceFiles( char * path )
         while (fgets(buf_ps, 1024, ptr) != NULL) {
             str = new string(buf_ps);
             if (str != NULL) {
-                imageFileames.push_back(str);
+                imageFilenames.push_back(str);
             }
             else {
                 break;
@@ -222,32 +224,34 @@ Mat ObjectDetect::loadFrame(int step)
 {
     Mat frameRead;
     if (fromFile) {
-        index += step;
-        if (index < 0) index = (int)(imageFileames.size() - 1);
-        if (index > (int)(imageFileames.size() - 1)) index = 0;
-        if (imageFileames.size() == 0) {
+        if (index < 0) index = (int)(imageFilenames.size() - 1);
+        if (index > (int)(imageFilenames.size() - 1)) index = 0;
+        if (imageFilenames.size() == 0) {
             return frameRead;
         } else {
 #if defined WIN32 || defined _WIN32
             //this string don't contain FILR_DIR,so need be copy.
-            int len = imageFileames.at(index)->size();
+            int len = imageFilenames.at(index)->size();
             strcpy(filename, filedir);
             strcat(filename, "\\");
-            strcat(filename, imageFileames.at(index)->c_str());
+            strcat(filename, imageFilenames.at(index)->c_str());
 #else
-            strncpy(filename,imageFileames.at(index)->c_str(),imageFileames.at(index)->size());
+            strncpy(filename,imageFilenames.at(index)->c_str(),imageFilenames.at(index)->size());
             //remove '\n'
-            *(filename + strlen(filename) - 1) = '\0';
+            *(filename + imageFilenames.at(index)->size() - 1) = '\0';
 #endif
+            index += step;
+//            printf("#%s#",filename);
             //read file
-            return imread(filename);
+            frameRead = imread(filename);
+            return frameRead;
         }
     } else if (fromVideo) {
-        currentFrame += step;
         if (currentFrame < 0)	currentFrame = 0;
         if (currentFrame > (cap.get(CV_CAP_PROP_FRAME_COUNT) - 1))	currentFrame = 0;
         cap.set(CV_CAP_PROP_POS_FRAMES, (double)currentFrame);
         cap >> frameRead;
+        currentFrame += step;
         //try to restart
         if(frameRead.empty()) {
             cap.set( CV_CAP_PROP_POS_FRAMES,0);
@@ -291,6 +295,32 @@ int ObjectDetect::detectObjects(Mat frame)
 }
 
 /**
+ * freeFilenames  function
+ *
+ * @param
+ * @return
+ */
+void ObjectDetect::freeFilenames()
+{
+    for (vector<string *>::iterator itr = imageFilenames.begin(); itr != imageFilenames.end(); ++itr) {
+        delete *itr;
+    }
+}
+
+/**
+ * closeVideo  function
+ *
+ * @param
+ * @return
+ */
+void ObjectDetect::closeCapture()
+{
+    if (cap.isOpened()) {
+        cap.release();
+    }
+}
+
+/**
  * get  function
  *
  * @param
@@ -324,6 +354,50 @@ bool ObjectDetect::isFromCamera()
 }
 
 /**
+ * set  function
+ *
+ * @param bool val
+ * @return void
+ */
+void ObjectDetect::setFromCamera(bool val)
+{
+    fromCamera = val;
+}
+
+/**
+ * set  function
+ *
+ * @param bool val
+ * @return void
+ */
+void ObjectDetect::setFromVideo(bool val)
+{
+    fromVideo = val;
+}
+
+/**
+ * set  function
+ *
+ * @param bool val
+ * @return void
+ */
+void ObjectDetect::setFromFile(bool val)
+{
+    fromFile = val;
+}
+
+/**
+ * get  function
+ *
+ * @param
+ * @return char *  file directory
+ */
+char * ObjectDetect::getFileDirectory()
+{
+    return filedir;
+}
+
+/**
  * get  function
  *
  * @param
@@ -343,6 +417,41 @@ char * ObjectDetect::getFilename()
 char * ObjectDetect::getVideoname()
 {
     return videoname;
+}
+
+/**
+ * get  function
+ *
+ * @param
+ * @return char *  videoname
+ */
+int    ObjectDetect::getVideoFrames()
+{
+    if (fromVideo) {
+        return cap.get(CV_CAP_PROP_FRAME_COUNT);
+    }
+}
+
+/**
+ * get  function
+ *
+ * @param
+ * @return char *  objectCascadeName
+ */
+char * ObjectDetect::getCascadeName()
+{
+    return objectCascadeName;
+}
+
+/**
+ * get  function
+ *
+ * @param
+ * @return int camera device index
+ */
+int    ObjectDetect::getCameraDevice()
+{
+    return cameraDevice;
 }
 
 /**
@@ -403,5 +512,16 @@ bool ObjectDetect::setVideoname( const char * name )
     }
     strcpy(videoname,name);
     fromVideo = true;
+    return true;
+}
+
+/**
+ * set  function
+ *
+ * @param
+ * @return true if copy success
+ */
+bool ObjectDetect::setCameraDevice(int idx) {
+    cameraDevice = idx;
     return true;
 }
