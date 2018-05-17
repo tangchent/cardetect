@@ -13,7 +13,8 @@ TEMPLATE = app
 SOURCES += main.cpp \
     objectdetect.cpp \
     mainwindow.cpp \
-    informationwindow.cpp
+    informationwindow.cpp \
+    imagelable.cpp
 
 INCLUDEPATH +=   /usr/local/opencv-2.4.10/include\
                           /usr/local/opencv-2.4.10/include/opencv\
@@ -25,7 +26,8 @@ LIBS += -L/usr/local/opencv-2.4.10/lib -lopencv_highgui -lopencv_core -lopencv_i
 HEADERS += \
     objectdetect.h \
     mainwindow.h \
-    informationwindow.h
+    informationwindow.h \
+    imagelable.h
 
 FORMS += \
     mainwindow.ui \

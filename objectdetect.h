@@ -28,6 +28,7 @@ public:
     ~ObjectDetect();
     bool readParameters(int argc, char** argv);
     bool init( void );
+    void deinit( void );
     inline void usage( void );
     bool isFromFile();
     bool isFromVideo();
@@ -49,11 +50,12 @@ public:
     bool setFileDirectory( const char * name );
     bool setVideoname( const char * name );
     bool setCameraDevice(int idx);
+    bool setFilename(string str);
 
 #if defined WIN32 || defined _WIN32
-    void readImageSequenceFiles( char * path );
+    int readImageSequenceFiles( char * path );
 #else
-    void readImageSequenceFiles( char * path );
+    int readImageSequenceFiles( char * path );
 #endif
     Mat loadFrame(int step = 1);
     int detectObjects(Mat frame);

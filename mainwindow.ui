@@ -48,7 +48,7 @@
        <x>640</x>
        <y>-20</y>
        <width>151</width>
-       <height>580</height>
+       <height>621</height>
       </rect>
      </property>
      <property name="title">
@@ -58,9 +58,9 @@
       <property name="geometry">
        <rect>
         <x>20</x>
-        <y>230</y>
+        <y>270</y>
         <width>130</width>
-        <height>151</height>
+        <height>71</height>
        </rect>
       </property>
       <property name="text">
@@ -132,7 +132,7 @@
       <property name="geometry">
        <rect>
         <x>23</x>
-        <y>190</y>
+        <y>230</y>
         <width>131</width>
         <height>20</height>
        </rect>
@@ -154,13 +154,49 @@
       <property name="geometry">
        <rect>
         <x>20</x>
-        <y>400</y>
+        <y>360</y>
         <width>130</width>
-        <height>151</height>
+        <height>91</height>
        </rect>
       </property>
       <property name="text">
        <string>File not loaded</string>
+      </property>
+      <property name="textFormat">
+       <enum>Qt::PlainText</enum>
+      </property>
+      <property name="alignment">
+       <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
+      </property>
+      <property name="wordWrap">
+       <bool>true</bool>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="openPicture">
+      <property name="geometry">
+       <rect>
+        <x>20</x>
+        <y>190</y>
+        <width>100</width>
+        <height>25</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>DetectPicture</string>
+      </property>
+     </widget>
+     <widget class="QLabel" name="scaleLabe">
+      <property name="geometry">
+       <rect>
+        <x>20</x>
+        <y>470</y>
+        <width>130</width>
+        <height>31</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Scale:
+1.0</string>
       </property>
       <property name="textFormat">
        <enum>Qt::PlainText</enum>

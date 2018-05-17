@@ -2,6 +2,7 @@
 #define MAINWINDOW_H
 #include "objectdetect.h"
 #include "informationwindow.h"
+#include "imagelable.h"
 #include <QWidget>
 #include <QCloseEvent>
 #include <QTimer>
@@ -17,7 +18,8 @@ class MainWindow : public QWidget
 public:
     explicit MainWindow(QWidget *parent = 0, int argc = 0, char **argv = NULL);
     ~MainWindow();
-    void detect(int step);
+    bool detect(int step);
+    bool detect(cv::Mat frame);
 
 protected:
     void closeEvent(QCloseEvent *event);
@@ -44,11 +46,25 @@ private slots:
 
     void on_nextButton_clicked();
 
+    void on_openPicture_clicked();
+
+    void on_imageLable_mouseMove(QMouseEvent *);
+
+    void on_imageLable_mouseRelease(QMouseEvent *);
+
+    void on_imageLable_mouseClicked(QMouseEvent *);
+
+    void on_imageLable_wheelRoll(QWheelEvent *event);
+
+    void on_imageLable_doubleClicked(QMouseEvent *event);
+
 private:
     Ui::MainWindow *mainWindow;
     InformationWindow *informationWindow;
     ObjectDetect *objectDetector;
     QTimer *timer;
+    ImageLable *imageLabel;
+    float scale;
     bool configChange;
 };
 

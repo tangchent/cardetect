@@ -11,6 +11,7 @@ ObjectDetect::ObjectDetect():
     initFinish(false)
 {
     imageFilenames.resize(1024);
+    imageFilenames.clear();
 }
 
 ObjectDetect::~ObjectDetect()
@@ -95,14 +96,23 @@ bool ObjectDetect::init( void )
     }
 
     if (fromFile) {
-        readImageSequenceFiles(filedir);
-        printf("image directory: '%s', total files: %d\n", filedir, imageFilenames.size());
+        if (imageFilenames.size() == 0) {
+            readImageSequenceFiles(filedir);
+            printf("image directory: '%s', total files: %d\n", filedir, imageFilenames.size());
+            if (imageFilenames.size() == 0) {
+                result = false;
+                initFinish = false;
+            }
+        } else {
+            printf("image filename: '%s'\n",imageFilenames.at(0)->c_str());
+        }
     } else if (fromVideo) {
         cap.open(videoname);
         if (!cap.isOpened()) {
             printf("--(!)Error loading '%s'\n", videoname);
             result = false;
         }
+        printf("video filename: '%s'\n",videoname);
     } else if (fromCamera) {
         cap.open(cameraDevice);
         if (!cap.isOpened()) {
@@ -110,11 +120,28 @@ bool ObjectDetect::init( void )
             result = false;
         }
     } else {
-        readImageSequenceFiles(filedir);
+        int size = readImageSequenceFiles(filedir);
         printf("image directory: '%s'\n", filedir);
+        if (size == 0) {
+            fromFile = false;
+            result = false;
+        } else {
+            fromFile = true;
+            result = true;
+        }
     }
     initFinish = result;
     return result;
+}
+
+void ObjectDetect::deinit( void )
+{
+    if (fromCamera || fromVideo) {
+        closeCapture();
+    } else if (fromFile) {
+        freeFilenames();
+    }
+    initFinish = false;
 }
 /**
  * print help messages
@@ -132,36 +159,73 @@ inline void ObjectDetect::usage( void )
 
 #if defined WIN32 || defined _WIN32
 /**
+ * repalce '/' with '\'
+ * @brief convertPathFormat
+ * @param path
+ */
+inline void convertPathFormat(char * path)
+{
+    int i = 0;
+    while (*(path + i) != '\0') {
+        if (*(path + i++) == '/') {
+            *(path + i - 1) = '\\';
+        }
+    }
+}
+/**
 * get all filename in given directory
 * only for windows platform
 * @param imgFilePath. the file directory
 * @param result . the reference of result.
-* @return
+* @return read size
 */
-void ObjectDetect::readImageSequenceFiles(char * path)
+int ObjectDetect::readImageSequenceFiles(char * path)
 {
-    imageFileames.clear();
-
+    imageFilenames.clear();
     string * str = NULL;
-    char tmpDirSpec[MAX_PATH + 1];
-    sprintf(tmpDirSpec, "%s\\*", path);
-
+    char tmpDirSpec[MAX_PATH];
+    sprintf(tmpDirSpec, "%s\\*.*", path);
+    convertPathFormat(tmpDirSpec);
     WIN32_FIND_DATA f;
-    HANDLE h = FindFirstFile(tmpDirSpec, &f);
+#ifdef UNICODE
+    WCHAR wszClassName[MAX_PATH];
+    MultiByteToWideChar(CP_ACP,
+                        0,
+                        tmpDirSpec,
+                        strlen(tmpDirSpec)+1,
+                        wszClassName,
+                        sizeof(wszClassName)/sizeof(wszClassName[0]));
+    HANDLE h = FindFirstFile(wszClassName, &f);
+#else
+    WIN32_FIND_DATA f; // for Visual Studio
+    HANDLE h = FindFirstFile(tmpDirSpec, &f); // for Visual Studio
+#endif
     if (h != INVALID_HANDLE_VALUE)
     {
-        FindNextFile(h, &f);	//read ..
-        FindNextFile(h, &f);	//read .
+        FindNextFile(h, &f); // read .
+        FindNextFile(h, &f); // read ..
         do
         {
-            str = new string(f.cFileName);
+#ifdef UNICODE
+            WideCharToMultiByte(CP_ACP, // default to ANSI code page
+                                0,         // no special flags to handle unmapped characters
+                                f.cFileName,   // wide character string to convert
+                                wcslen(f.cFileName) + 1,   // the number of wide characters in that string
+                                tmpDirSpec, // put the output ascii characters at the end of the buffer
+                                MAX_PATH,  // there is at least this much space there
+                                NULL,      // no replacement character given
+                                NULL );
+            str = new string(tmpDirSpec);
+#else
+            str = new string(f.cFileName); // for Visual Studio
+#endif
             if (str != NULL) {
                 imageFilenames.push_back(str);
             }
         } while (FindNextFile(h, &f));
-
     }
     FindClose(h);
+    return imageFilenames.size();
 }
 #else
 /**
@@ -173,9 +237,9 @@ void ObjectDetect::readImageSequenceFiles(char * path)
 * @param result . the reference of command result.
 * if execute 'ls' ,the result contains all file name in current dir
 * attention that result is split by '\n',and each element contains '\n'
-* @return
+* @return read size
 */
-void ObjectDetect::readImageSequenceFiles( char * path )
+int ObjectDetect::readImageSequenceFiles( char * path )
 {
     char buf_ps[1024];
     char ps[1024];
@@ -215,9 +279,28 @@ void ObjectDetect::readImageSequenceFiles( char * path )
     else {
         printf("popen '%s' error\n", ps);
     }
+    return imageFilenames.size();
 }
 #endif
 
+#if defined WIN32 || defined _WIN32
+/**
+ * @brief findChar
+ * @param str
+ * @param c
+ * @return postion of c
+ */
+inline int findChar(const char * str,char c)
+{
+    int i = 0;
+    while (*(str + i) != '\0') {
+        if (*(str + i++) == c) {
+            return i;
+        }
+    }
+    return -1;
+}
+#endif
 /**
  * loadNextFrame  function
  *
@@ -235,17 +318,27 @@ Mat ObjectDetect::loadFrame(int step)
         } else {
 #if defined WIN32 || defined _WIN32
             //this string don't contain FILR_DIR,so need be copy.
-            int len = imageFilenames.at(index)->size();
-            strcpy(filename, filedir);
-            strcat(filename, "\\");
-            strcat(filename, imageFilenames.at(index)->c_str());
+            if (findChar(imageFilenames.at(index)->c_str(),'/') == -1 &&
+                findChar(imageFilenames.at(index)->c_str(),'\\') == -1){
+                strcpy(filename, filedir);
+                strcat(filename, "\\");
+                strcat(filename, imageFilenames.at(index)->c_str());
+                convertPathFormat(filename);
+            } else {
+                strcpy(filename, imageFilenames.at(index)->c_str());
+                convertPathFormat(filename);
+            }
 #else
             strncpy(filename,imageFilenames.at(index)->c_str(),imageFilenames.at(index)->size());
             //remove '\n'
-            *(filename + imageFilenames.at(index)->size() - 1) = '\0';
+            if (*(filename + imageFilenames.at(index)->size() - 1) == '\n') {
+                *(filename + imageFilenames.at(index)->size() - 1) = '\0';
+            } else {
+                *(filename + imageFilenames.at(index)->size()) = '\0';
+            }
 #endif
             index += step;
-//            printf("#%s#",filename);
+            printf("#%s#",filename);
             //read file
             frameRead = imread(filename);
             return frameRead;
@@ -309,6 +402,7 @@ void ObjectDetect::freeFilenames()
     for (vector<string *>::iterator itr = imageFilenames.begin(); itr != imageFilenames.end(); ++itr) {
         delete *itr;
     }
+    imageFilenames.clear();
     initFinish = false;
 }
 
@@ -568,5 +662,18 @@ bool ObjectDetect::setVideoname( const char * name )
  */
 bool ObjectDetect::setCameraDevice(int idx) {
     cameraDevice = idx;
+    return true;
+}
+
+/**
+ * set  function
+ *
+ * @param
+ * @return true if set success
+ */
+bool ObjectDetect::setFilename(string str)
+{
+    string * name = new String(str);
+    imageFilenames.push_back(name);
     return true;
 }
